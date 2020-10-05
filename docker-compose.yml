@@ -1,0 +1,16 @@
+version: '3.0'
+
+services:
+  vagrant:
+      image: moleszek/vagrant:1.0
+      container_name: "Vagrant"
+      working_dir: /home
+      volumes:
+        - pathToVagrantfile:/home
+      tty: true
+  linode:
+      image: moleszek/vagrant:1.0
+      container_name: "Vagrant"
+      working_dir: /home
+      volumes:
+        - pathToVagrantFile:/home
