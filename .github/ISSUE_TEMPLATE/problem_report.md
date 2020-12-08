@@ -6,13 +6,13 @@ labels: problem report
 assignees: ''
 ---
 
-**Describe the bug**
+**Describe the bug**</br>
 A clear and concise description of what the bug is.
 
-**Version**
+**Version**</br>
 The version of the app that issue has been found
 
-**Reproduction rate**
+**Reproduction rate**</br>
 Chance from 0% to 100% to reproduce the issue
 
 **How to reproduce**
@@ -20,11 +20,11 @@ Chance from 0% to 100% to reproduce the issue
     1.
     2.
 
-**Actual behavior**
+**Actual behavior**</br>
 A clear and concise description of actual behavior
 
-**Expected behavior**
+**Expected behavior**</br>
 A clear and concise description of what you expected to happen.
 
-**Screenshots and logs**
+**Screenshots and logs**</br>
 If applicable, add screenshots to help explain your problem.

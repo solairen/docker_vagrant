@@ -14,10 +14,5 @@ This docker container contains:
 * docker pull moleszek/vagrant:1.0
 
 ### To run vagrant script using vagrant Docker image directly:
-* docker run -it --rm -v {localFolderPath}:/home -w /home moleszek/vagrant:1.0 up --provider vsphere/linode => to create VM on vsphere or linode
-* docker run -it --rm -v {localFolderPath}:/home -w /home moleszek/vagrant:1.0 destroy => to remove VM
-
-### To run vagrant script using docker-compose:
-* docker-compose run --rm vagrant up --provider vsphere => to build VM on vpshere
-* docker-compose run --rm vagrant up --provider linode => to build VM on linode
-* docker-compose run --rm vagrant destroy => to remove VM
+* docker run -it --rm -v {localFolderPath}:/vagrant moleszek/vagrant:1.0 up --provider vsphere/linode => to create VM on vsphere or linode
+* docker run -it --rm -v {localFolderPath}:/vagrant moleszek/vagrant:1.0 destroy => to remove VM

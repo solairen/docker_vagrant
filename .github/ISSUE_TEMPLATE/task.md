@@ -1,8 +1,8 @@
 ---
-name: Change request
-about: Suggest change of existing function
+name: Task
+about: New functionality suggestion
 title: ''
-labels: change request
+labels: task
 assignees: ''
 ---
 
