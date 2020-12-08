@@ -1,4 +1,4 @@
-name: Publish docker image
+name: Push docker image
 on:
   release:
     types: 
@@ -14,7 +14,7 @@ jobs:
         repository: ${{ github.repository_owner }}/docker_tag
         ref: master
         token: ${{ secrets.token }}
-        path: .github/actions/docker_tag 
+        path: .github/actions/docker_tag
     - name: test docker image
       uses: ./.github/actions/docker_tag
       with:

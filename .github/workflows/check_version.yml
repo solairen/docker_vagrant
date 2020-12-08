@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: login to GitHub registry
-      run: docker login docker.pkg.github.com -u ${{ github.repository_owner }} -p ${{ secrets.token }}
+      run: echo ${{ secrets.token }} | docker login docker.pkg.github.com -u ${{ github.repository_owner }} --password-stdin
     - name: get version_checker repository
       uses: actions/checkout@v2
       with:
@@ -33,7 +33,7 @@ jobs:
       uses: actions-js/push@master
       with:
         github_token: ${{ secrets.token }}
-        author_email: michal.oleszek@outlook.com
+        author_email: ${{ secrets.mail }}
         author_name: ${{ github.repository_owner }}
         message: ${{ steps.dockerfile_update.outputs.response }}
         branch: main
