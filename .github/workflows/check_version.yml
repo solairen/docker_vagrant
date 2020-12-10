@@ -1,0 +1,41 @@
+name: Check vagrant version
+on:
+  schedule:
+    - cron: "0 0 * * 1"
+jobs:
+  Check_Version:
+    runs-on: ubuntu-latest
+    steps:
+    - name: login to GitHub registry
+      run: echo ${{ secrets.token }} | docker login docker.pkg.github.com -u ${{ github.repository_owner }} --password-stdin
+    - name: get version_checker repository
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ github.repository_owner }}/version_checker
+        ref: main
+        token: ${{ secrets.token }}
+        path: .github/actions/version_checker
+    - name: get docker_vagrant repository
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ github.repository }}
+        ref: main
+        token: ${{ secrets.token }}
+        path: .github/actions/${{ github.repository }}
+    - name: update dockerfile
+      id: dockerfile_update
+      uses: ./.github/actions/version_checker
+      with:
+        component: vagrant
+        path: ./.github/actions/${{ github.repository }}
+        token: ${{ secrets.token }}
+    - name: push changes to docker_vagrant repository
+      uses: actions-js/push@master
+      with:
+        github_token: ${{ secrets.token }}
+        author_email: ${{ secrets.mail }}
+        author_name: ${{ github.repository_owner }}
+        message: ${{ steps.dockerfile_update.outputs.response }}
+        branch: main
+        directory: .github/actions/${{ github.repository }}
+        repository: ${{ github.repository }}
