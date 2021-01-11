@@ -9,7 +9,7 @@ jobs:
       ver: ${{ steps.dockerfile_update.outputs.response }}
     steps:
     - name: Login to GitHub registry
-      run: echo ${{ secrets.token }} | docker login ghcr.io --username ${{ github.repository_owner }} --password-stdin
+      run: echo ${{ secrets.token }} | docker login docker.pkg.github.com --username ${{ github.repository_owner }} --password-stdin
     - name: Checkout version_checker repository
       uses: actions/checkout@v2
       with:
