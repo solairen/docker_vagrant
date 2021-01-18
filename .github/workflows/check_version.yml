@@ -50,7 +50,7 @@ jobs:
         token: ${{ secrets.token }}
         path: .github/actions/${{ github.repository }}
     - name: Download Dockerfile
-      uses: actions/download-articaft@v2
+      uses: actions/download-artifact@v2
       with:
         name: dockerfile
         path: .github/actions/${{ github.repository }}
