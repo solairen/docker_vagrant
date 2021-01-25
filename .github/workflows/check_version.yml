@@ -60,7 +60,7 @@ jobs:
         github_token: ${{ secrets.token }}
         author_email: ${{ secrets.mail }}
         author_name: ${{ github.repository_owner }}
-        message: ${{ steps.dockerfile_update.outputs.response }}
+        message: ${{ needs.Check_Version.outputs.ver }}
         branch: main
         directory: .github/actions/${{ github.repository }}
         repository: ${{ github.repository }}
