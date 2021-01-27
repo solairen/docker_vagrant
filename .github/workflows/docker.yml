@@ -8,14 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: get docker_tag repository
+    - name: Checkout docker_tag repository
       uses: actions/checkout@v2
       with:
         repository: ${{ github.repository_owner }}/docker_tag
         ref: master
         token: ${{ secrets.token }}
         path: .github/actions/docker_tag
-    - name: test docker image
+    - name: Test docker image
       uses: ./.github/actions/docker_tag
       with:
         username: ${{ secrets.docker_username }}
@@ -31,14 +31,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: get docker_tag repository
+    - name: Checkout docker_tag repository
       uses: actions/checkout@v2
       with:
         repository: ${{ github.repository_owner }}/docker_tag
         ref: master
         token: ${{ secrets.token }}
         path: .github/actions/docker_tag
-    - name: push docker image to Docker Hub
+    - name: Push docker image to Docker Hub
       uses: ./.github/actions/docker_tag
       with:
         username: ${{ secrets.docker_username }}
@@ -49,10 +49,10 @@ jobs:
         github: true
         token: ${{ secrets.token }}
         owner: ${{ github.repository_owner }}
-    - name: update Docker README
-      uses: peter-evans/dockerhub-description@v2.1.0
-      env:
-        DOCKERHUB_USERNAME: ${{ secrets.docker_username }}
-        DOCKERHUB_PASSWORD: ${{ secrets.docker_password }}
-        DOCKERHUB_REPOSITORY: moleszek/vagrant
-        README_FILEPATH: README.md
+    #- name: update Docker README
+    #  uses: peter-evans/dockerhub-description@v2.1.0
+    #  env:
+    #    DOCKERHUB_USERNAME: ${{ secrets.docker_username }}
+    #    DOCKERHUB_PASSWORD: ${{ secrets.docker_password }}
+    #    DOCKERHUB_REPOSITORY: moleszek/vagrant
+    #    README_FILEPATH: README.md

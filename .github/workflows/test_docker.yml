@@ -8,14 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: get docker_tag repository
+    - name: Checkout docker_tag repository
       uses: actions/checkout@v2
       with:
         repository: ${{ github.repository_owner }}/docker_tag
         ref: master
         token: ${{ secrets.token }}
         path: .github/actions/docker_tag
-    - name: test docker image
+    - name: Test docker image
       uses: ./.github/actions/docker_tag
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
