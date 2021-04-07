@@ -72,6 +72,10 @@ jobs:
     steps:
     - name: Checkout docker_vagrant repository
       uses: actions/checkout@v2
+      with:
+        repository: ${{ github.repository }}
+        ref: main
+        token: ${{ secrets.token }}
     - name: Get current date
       uses: srfrnk/current-time@master
       id: current-time
