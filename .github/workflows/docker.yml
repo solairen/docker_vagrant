@@ -7,7 +7,12 @@ jobs:
   Test_Image:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - name: Checkout docker_vagrant repository
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ github.repository }}
+        ref: main
+        token: ${{ secrets.token }}
     - name: Checkout docker_tag repository
       uses: actions/checkout@v2
       with:
@@ -30,7 +35,12 @@ jobs:
     needs: Test_Image
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - name: Checkout docker_vagrant repository
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ github.repository }}
+        ref: main
+        token: ${{ secrets.token }}
     - name: Checkout docker_tag repository
       uses: actions/checkout@v2
       with:
