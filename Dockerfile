@@ -2,7 +2,7 @@ FROM debian:10-slim
 
 LABEL maintainer="michal.oleszek@outlook.com"
 
-ARG version=2.2.15
+ARG version=2.2.16
 
 RUN mkdir /vagrant
 WORKDIR /vagrant
