@@ -3,7 +3,7 @@ on:
   schedule:
     - cron: "0 0 * * 1"
 jobs:
-  Check_Version:
+  check_vagrant_version:
     runs-on: ubuntu-latest
     outputs:
       ver: ${{ steps.dockerfile_update.outputs.response }}
@@ -37,8 +37,8 @@ jobs:
       with:
         name: dockerfile
         path: ./.github/actions/${{ github.repository }}/Dockerfile
-  Push_Changes:
-    needs: Check_Version
+  push_changes_to_repository:
+    needs: check_vagrant_version
     runs-on: ubuntu-latest
     if: needs.Check_Version.outputs.ver != ''
     steps:
@@ -64,10 +64,10 @@ jobs:
         branch: main
         directory: .github/actions/${{ github.repository }}
         repository: ${{ github.repository }}
-  Create_Release:
+  create_release:
     needs:
-      - Check_Version
-      - Push_Changes
+      - check_vagrant_version
+      - push_changes_to_repository
     runs-on: ubuntu-latest
     steps:
     - name: Checkout docker_vagrant repository
@@ -91,7 +91,7 @@ jobs:
         release_name: Release ${{ steps.current-time.outputs.formattedTime }}
         body: |
           Changes in this release:
-            - Vagrant ${{ needs.Check_Version.outputs.ver }}
+            - ${{ needs.Check_Version.outputs.ver }}
         draft: false
         prerelease: false
     - name: Cleanup

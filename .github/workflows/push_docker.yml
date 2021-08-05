@@ -1,10 +1,22 @@
-name: Push docker image
+name: Push docker image to DockerHub
 on:
   release:
     types: 
       - published
 jobs:
-  Test_Image:
+  build_docker_image:
+      runs-on: ubuntu-latest
+      container: docker:stable
+      steps:
+      - name: Checkout docker_terraform repository
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ github.repository }}
+          ref: main
+          token: ${{ secrets.token }}
+      - name: Build dockerfile
+        run: docker build -t docker-vagrant .
+  test_docker_vagrant_version:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout docker_vagrant repository
@@ -31,8 +43,10 @@ jobs:
         github: true
         token: ${{ secrets.token }}
         owner: ${{ github.repository_owner }}
-  Push_Image:
-    needs: Test_Image
+  push_docker_image_to_dockerhub:
+    needs:
+      - build_docker_image
+      - test_docker_vagrant_version
     runs-on: ubuntu-latest
     steps:
     - name: Checkout docker_vagrant repository
