@@ -40,7 +40,7 @@ jobs:
   push_changes_to_repository:
     needs: check_vagrant_version
     runs-on: ubuntu-latest
-    if: needs.Check_Version.outputs.ver != ''
+    if: needs.check_vagrant_version.outputs.ver != ''
     steps:
     - name: Checkout docker_vagrant repository
       uses: actions/checkout@v2
@@ -60,7 +60,7 @@ jobs:
         github_token: ${{ secrets.token }}
         author_email: ${{ secrets.mail }}
         author_name: ${{ github.repository_owner }}
-        message: ${{ needs.Check_Version.outputs.ver }}
+        message: ${{ needs.check_vagrant_version.outputs.ver }}
         branch: main
         directory: .github/actions/${{ github.repository }}
         repository: ${{ github.repository }}
@@ -91,7 +91,7 @@ jobs:
         release_name: Release ${{ steps.current-time.outputs.formattedTime }}
         body: |
           Changes in this release:
-            - ${{ needs.Check_Version.outputs.ver }}
+            - ${{ needs.check_vagrant_version.outputs.ver }}
         draft: false
         prerelease: false
     - name: Cleanup
