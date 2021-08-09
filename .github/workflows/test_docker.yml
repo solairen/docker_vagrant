@@ -1,13 +1,11 @@
 name: Test docker image
 on:
   push:
-    branches:
-      - '*'
-      - '!main'
+    branches-ignore:
+      - "main"
   pull_request:
-    branches:
-      - '*'
-      - '!main'
+    branches-ignore:
+      - "main"
 jobs:
   build_docker_image:
       runs-on: ubuntu-latest
