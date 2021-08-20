@@ -31,7 +31,7 @@ jobs:
         check=$(curl -s "https://api.github.com/repos/hashicorp/vagrant/tags" | grep '"name":' | sed "s/[^0-9.]//g" | head -n1)
         echo ::set-output name=response::$check
     - name: Set name
-      run: terraform:${{ steps.version.outputs.response }}
+      run: echo terraform:${{ steps.version.outputs.response }}
     #- name: Checkout docker_tag repository
     #  uses: actions/checkout@v2
     #  with:
