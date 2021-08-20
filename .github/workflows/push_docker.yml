@@ -16,15 +16,9 @@ jobs:
   #        token: ${{ secrets.token }}
   #    - name: Build dockerfile
   #      run: docker build -t docker-vagrant .
-  test_docker_vagrant_version:
+  check_vagrant_version:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout docker_vagrant repository
-      uses: actions/checkout@v2
-      with:
-        repository: ${{ github.repository }}
-        ref: main
-        token: ${{ secrets.token }}
     - name: Get terraform version
       id: version
       run: |
