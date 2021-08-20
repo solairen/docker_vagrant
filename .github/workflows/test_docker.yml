@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     container: docker:stable
     steps:
-    - name: Checkout pihole repository
+    - name: Checkout ${{ github.repository }} repository
       uses: actions/checkout@v2
       with:
         repository: ${{ github.repository }}
