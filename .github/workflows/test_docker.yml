@@ -18,4 +18,4 @@ jobs:
         ref: ${{ github.ref }}
         token: ${{ secrets.token }}
     - name: Build dockerfile
-      run: docker build -t vagrant -f Docker/Dockerfile .
+      run: docker build -t vagrant -f Dockerfile .
