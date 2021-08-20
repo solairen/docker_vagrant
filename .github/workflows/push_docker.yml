@@ -1,8 +1,8 @@
 name: Push docker image to DockerHub
-on:
-  release:
-    types: 
-      - published
+on: [ workflow_dispatch ]
+  #release:
+  #  types: 
+  #    - published
 jobs:
   #build_docker_image:
   #    runs-on: ubuntu-latest
