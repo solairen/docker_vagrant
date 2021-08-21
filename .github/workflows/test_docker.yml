@@ -7,42 +7,15 @@ on:
     branches-ignore:
       - "main"
 jobs:
-  build_docker_image:
-      runs-on: ubuntu-latest
-      container: docker:stable
-      steps:
-      - name: Checkout docker_terraform repository
-        uses: actions/checkout@v2
-        with:
-          repository: ${{ github.repository }}
-          ref: main
-          token: ${{ secrets.token }}
-      - name: Build dockerfile
-        run: docker build -t docker-terraform .
-  test_docker_vagrant_version:
+  test_docker_image:
     runs-on: ubuntu-latest
+    container: docker:stable
     steps:
-    - name: Checkout docker_vagrant repository
+    - name: Checkout ${{ github.repository }} repository
       uses: actions/checkout@v2
       with:
         repository: ${{ github.repository }}
-        ref: main
+        ref: ${{ github.ref }}
         token: ${{ secrets.token }}
-    - name: Checkout docker_tag repository
-      uses: actions/checkout@v2
-      with:
-        repository: ${{ github.repository_owner }}/docker_tag
-        ref: master
-        token: ${{ secrets.token }}
-        path: .github/actions/docker_tag
-    - name: Test docker image
-      uses: ./.github/actions/docker_tag
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: moleszek/vagrant
-        tag_latest: false
-        push: false
-        github: true
-        token: ${{ secrets.token }}
-        owner: ${{ github.repository_owner }}
+    - name: Build dockerfile
+      run: docker build -t vagrant -f Dockerfile .
