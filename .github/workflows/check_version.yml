@@ -1,100 +1,110 @@
+---
 name: Check vagrant version
+
 on:
   schedule:
     - cron: "0 0 * * 1"
+
+env:
+  GH_TOKEN: ${{ secrets.token }}
+  MAIL: ${{ secrets.mail }}
+
 jobs:
   check_vagrant_version:
+    name: Check vagrant version
     runs-on: ubuntu-latest
     outputs:
       ver: ${{ steps.dockerfile_update.outputs.response }}
     steps:
-    - name: Login to GitHub registry
-      run: echo ${{ secrets.token }} | docker login docker.pkg.github.com --username ${{ github.repository_owner }} --password-stdin
-    - name: Checkout version_checker repository
-      uses: actions/checkout@v2
-      with:
-        repository: ${{ github.repository_owner }}/version_checker
-        ref: main
-        token: ${{ secrets.token }}
-        path: .github/actions/version_checker
-    - name: Checkout docker_vagrant repository
-      uses: actions/checkout@v2
-      with:
-        repository: ${{ github.repository }}
-        ref: main
-        token: ${{ secrets.token }}
-        path: .github/actions/${{ github.repository }}
-    - name: Update dockerfile
-      id: dockerfile_update
-      uses: ./.github/actions/version_checker
-      with:
-        component: vagrant
-        path: ./.github/actions/${{ github.repository }}
-        token: ${{ secrets.token }}
-    - name: Upload dockerfile
-      if: steps.dockerfile_update.outputs.response != ''
-      uses: actions/upload-artifact@v2
-      with:
-        name: dockerfile
-        path: ./.github/actions/${{ github.repository }}/Dockerfile
+      - name: Login to GitHub registry
+        run: echo ${{ env.GH_TOKEN }} | docker login ghcr.io --username ${{ github.repository_owner }} --password-stdin
+      - name: Checkout ${{ github.repository }} repository
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ github.repository_owner }}/version_checker
+          ref: main
+          token: ${{ env.GH_TOKEN }}
+          path: .github/actions/version_checker
+      - name: Checkout ${{ github.repository }} repository
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ github.repository }}
+          ref: main
+          token: ${{ env.GH_TOKEN }}
+          path: .github/actions/${{ github.repository }}
+      - name: Update dockerfile
+        id: dockerfile_update
+        uses: ./.github/actions/version_checker
+        with:
+          component: vagrant
+          path: ./.github/actions/${{ github.repository }}
+          token: ${{ env.GH_TOKEN }}
+      - name: Upload dockerfile
+        if: steps.dockerfile_update.outputs.response != ''
+        uses: actions/upload-artifact@v2
+        with:
+          name: dockerfile
+          path: ./.github/actions/${{ github.repository }}/Dockerfile
   push_changes_to_repository:
+    name: Push changes to ${{ github.repository }}
     needs: check_vagrant_version
     runs-on: ubuntu-latest
     if: needs.check_vagrant_version.outputs.ver != ''
     steps:
-    - name: Checkout docker_vagrant repository
-      uses: actions/checkout@v2
-      with:
-        repository: ${{ github.repository }}
-        ref: main
-        token: ${{ secrets.token }}
-        path: .github/actions/${{ github.repository }}
-    - name: Download Dockerfile
-      uses: actions/download-artifact@v2
-      with:
-        name: dockerfile
-        path: .github/actions/${{ github.repository }}
-    - name: Push changes to docker_vagrant repository
-      uses: actions-js/push@master
-      with:
-        github_token: ${{ secrets.token }}
-        author_email: ${{ secrets.mail }}
-        author_name: ${{ github.repository_owner }}
-        message: ${{ needs.check_vagrant_version.outputs.ver }}
-        branch: main
-        directory: .github/actions/${{ github.repository }}
-        repository: ${{ github.repository }}
+      - name: Checkout ${{ github_repository }} repository
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ github.repository }}
+          ref: main
+          token: ${{ env.GH_TOKEN }}
+          path: .github/actions/${{ github.repository }}
+      - name: Download Dockerfile
+        uses: actions/download-artifact@v2
+        with:
+          name: dockerfile
+          path: .github/actions/${{ github.repository }}
+      - name: Push changes to ${{ github.repository }} repository
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ env.GH_TOKEN }}
+          author_email: ${{ env.MAIL }}
+          author_name: ${{ github.repository_owner }}
+          message: ${{ needs.check_vagrant_version.outputs.ver }}
+          branch: main
+          directory: .github/actions/${{ github.repository }}
+          repository: ${{ github.repository }}
   create_release:
+    name: Create release
     needs:
       - check_vagrant_version
       - push_changes_to_repository
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout docker_vagrant repository
-      uses: actions/checkout@v2
-      with:
-        repository: ${{ github.repository }}
-        ref: main
-        token: ${{ secrets.token }}
-    - name: Get current date
-      uses: srfrnk/current-time@master
-      id: current-time
-      with:
-        format: YYYY-MM-DD
-    - name: Create release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.token }}
-      with:
-        tag_name: ${{ github.run_number }}
-        release_name: Release ${{ steps.current-time.outputs.formattedTime }}
-        body: |
-          Changes in this release:
-            - ${{ needs.check_vagrant_version.outputs.ver }}
-        draft: false
-        prerelease: false
-    - name: Cleanup
-      uses: geekyeggo/delete-artifact@v1
-      with:
-        name: dockerfile
+      - name: Checkout ${{ github.repository }} repository
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ github.repository }}
+          ref: main
+          token: ${{ env.GH_TOKEN }}
+      - name: Get current date
+        uses: srfrnk/current-time@master
+        id: current-time
+        with:
+          format: YYYY-MM-DD
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ env.GH_TOKEN }}
+        with:
+          tag_name: ${{ github.run_number }}
+          release_name: Release ${{ steps.current-time.outputs.formattedTime }}
+          body: |
+            Changes in this release:
+              - ${{ needs.check_vagrant_version.outputs.ver }}
+          draft: false
+          prerelease: false
+      - name: Cleanup
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          name: dockerfile

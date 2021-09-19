@@ -1,4 +1,5 @@
 name: Test docker image
+
 on:
   push:
     branches-ignore:
@@ -6,16 +7,21 @@ on:
   pull_request:
     branches-ignore:
       - "main"
+
+env:
+  GH_TOKEN: ${{ secrets.token }}
+
 jobs:
-  test_docker_image:
+  test:
+    name: Test docker image
     runs-on: ubuntu-latest
     container: docker:stable
     steps:
-    - name: Checkout ${{ github.repository }} repository
-      uses: actions/checkout@v2
-      with:
-        repository: ${{ github.repository }}
-        ref: ${{ github.ref }}
-        token: ${{ secrets.token }}
-    - name: Build dockerfile
-      run: docker build -t vagrant -f Dockerfile .
+      - name: Checkout ${{ github.repository }} repository
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ github.repository }}
+          ref: ${{ github.ref }}
+          token: ${{ env.GH_TOKEN }}
+      - name: Build dockerfile
+        run: docker build -t vagrant -f Dockerfile .
