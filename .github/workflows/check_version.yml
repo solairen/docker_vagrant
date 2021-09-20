@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Login to GitHub registry
         run: echo ${{ env.GH_TOKEN }} | docker login ghcr.io --username ${{ github.repository_owner }} --password-stdin
-      - name: Checkout ${{ github.repository }} repository
+      - name: Checkout solairen/version_checker repository
         uses: actions/checkout@v2
         with:
           repository: ${{ github.repository_owner }}/version_checker
