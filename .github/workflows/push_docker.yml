@@ -7,7 +7,6 @@ on:
       - published
 
 env:
-  GH_TOKEN: ${{ secrets.token }}
   DOCKER_USER: ${{ secrets.docker_username }}
   DOCKER_PASS: ${{ secrets.docker_token }}
 
