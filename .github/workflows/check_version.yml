@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     if: needs.check_vagrant_version.outputs.ver != ''
     steps:
-      - name: Checkout ${{ github_repository }} repository
+      - name: Checkout ${{ github.repository }} repository
         uses: actions/checkout@v2
         with:
           repository: ${{ github.repository }}
