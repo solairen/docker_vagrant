@@ -1,0 +1,101 @@
+name: Check vagrant version
+on:
+  schedule:
+    - cron: "0 20 * * 5"
+
+env:
+  GH_TOKEN: ${{ secrets.token }}
+  REPO: ${{ secrets.repo }}
+  DISCORD: ${{ secret.discord_webhook }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.dockerfile_update.outputs.response }}
+    steps:
+    - name: Checkout version_checker repository
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ env.REPO }}/version_checker
+        ref: main
+        token: ${{ env.GH_TOKEN }}
+        path: .github/actions/version_checker
+    - name: Checkout ${{ github.repository }} repository
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ github.repository }}
+        ref: main
+        token: ${{ env.GH_TOKEN }}
+        path: .github/actions/${{ github.repository }}
+    - name: Update dockerfile
+      id: dockerfile_update
+      uses: ./.github/actions/version_checker
+      with:
+        component: vagrant
+        path: ./.github/actions/${{ github.repository }}
+        token: ${{ env.GH_TOKEN }}
+    - name: Upload dockerfile
+      if: steps.dockerfile_update.outputs.response != ''
+      uses: actions/upload-artifact@v2
+      with:
+        name: dockerfile
+        path: ./.github/actions/${{ github.repository }}/Dockerfile
+  push:
+    needs: build
+    if: ${{ contains(needs.build.outputs.version), 'Vagrant version changed to') }}
+    name: Push changes to repository
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout ${{ github.repository }} repository
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ github.repository }}
+        ref: main
+        token: ${{ env.GH_TOKEN }}
+    - name: Download Dockerfile
+      uses: actions/download-artifact@v2
+      with:
+        name: dockerfile
+    - name: Check Vagrant version
+      id: vagrant
+      run: |
+        check=$(curl -s "https://api.github.com/repos/hashicorp/vagrant/tags" | grep '"name":' | sed "s/[^0-9.]//g" | head -n1)
+        echo ::set-output name=response::$check
+    - name: Create Pull request
+      uses: peter-evans/create-pull-request@v3
+      with:
+        token: ${{ env.GH_TOKEN }}
+        title: ${{ needs.build.outputs.version }}
+        commit-message: ${{ needs.build.outputs.version }}
+        branch: vagrant-${{ steps.vagrant.outputs.response }}
+        body: ${{ needs.build.outputs.version }}
+    - name: Cleanup
+      uses: geekyeggo/delete-artifact@v1
+      with:
+        name: dockerfile
+  notify_on_success:
+    name: Send notification on success
+    needs:
+      - build
+      - push
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ env.DISCORD }}
+          description: "${{ needs.build.outputs.version }}"
+  notify_on_failure:
+    name: Send notification on failure
+    needs:
+      - build
+      - push
+    if: ${{ failure() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ env.DISCORD }}
+          status: failure
+          description: "Checking Vagrant version failed!"

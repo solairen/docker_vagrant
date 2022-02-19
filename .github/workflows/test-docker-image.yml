@@ -1,0 +1,51 @@
+
+---
+name: Check image
+on:
+  pull_request:
+    types: [ opened, synchronize ]
+
+env:
+  GH_TOKEN: ${{ secrets.token }}
+  DISCORD: ${{ secrets.discord_webhook }}
+
+jobs:
+  test:
+    name: Test docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout version_checker repository
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ github.repository }}
+          ref: ${{ github.ref }}
+          token: ${{ env.GH_TOKEN }}
+      - name: Test docker image
+        uses: docker/build-push-action@v2
+        with:
+          file: Dockerfile
+          push: false
+          tags: vagrant:latest
+  notify_on_success:
+    name: Send notification on success
+    needs:
+      - test
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ env.DISCORD }}
+          description: "Successfully test docker image!"
+  notify_on_failure:
+    name: Send notification on failure
+    needs:
+      - test
+    if: ${{ failure() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ env.DISCORD }}
+          status: failure
+          description: "Failed to test docker image do DockerHub!"

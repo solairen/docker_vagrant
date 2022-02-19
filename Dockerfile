@@ -1,6 +1,6 @@
-FROM debian:10-slim
+FROM ubuntu:20.04
 
-LABEL maintainer="michal.oleszek@outlook.com"
+LABEL maintainer="mrsolairen@outlook.com"
 
 ARG version=2.2.19
 
