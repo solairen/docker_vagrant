@@ -1,21 +1,20 @@
-FROM debian:10-slim
+FROM ubuntu:20.04
 
-LABEL maintainer="michal.oleszek@outlook.com"
+LABEL maintainer="mrsolairen@outlook.com"
 
 ARG version=2.2.19
 
 RUN mkdir /vagrant
 WORKDIR /vagrant
 
-RUN apt-get -y update \
-    && apt-get -y install --no-install-recommends wget ca-certificates \
-    apt-utils virt-manager build-essential ruby-full ruby-all-dev libvirt-dev gcc \
-    && apt-get clean \
+RUN apt -y update \
+    && apt -y install --no-install-recommends curl apt-utils ca-certificates build-essential \
+    && apt clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Vagrant
-RUN wget https://releases.hashicorp.com/vagrant/${version}/vagrant_${version}_x86_64.deb
-RUN dpkg -i vagrant_${version}_x86_64.deb
+RUN curl -O https://releases.hashicorp.com/vagrant/${version}/vagrant_${version}_x86_64.deb
+RUN apt -y install ./vagrant_${version}_x86_64.deb
 RUN vagrant plugin install vagrant-vsphere
 RUN vagrant plugin install vagrant-linode
 

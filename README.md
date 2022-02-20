@@ -1,5 +1,5 @@
 ### About:
-* OS: Debian 10 slim
+* OS: Ubuntu 20.04
 
 This docker container contains:
 * [Vagrant](https://www.vagrantup.com/)

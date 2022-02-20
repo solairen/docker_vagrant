@@ -1,0 +1,59 @@
+---
+name: Create release
+on:
+  workflow_dispatch:
+
+env:
+  GH_TOKEN: ${{ secrets.token }}
+  DISCORD: ${{ secrets.discord_webhook }}
+
+jobs:
+  create-release:
+    name: Create release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get current date
+        uses: srfrnk/current-time@master
+        id: current-time
+        with:
+          format: YYYY-MM-DD
+      - name: Check GitHub CLI version
+        id: vagrant
+        run: |
+          check=$(curl -s "https://api.github.com/repos/hashicorp/vagrant/tags" | grep '"name":' | sed "s/[^0-9.]//g" | head -n1)
+          echo ::set-output name=response::$check
+      - name: Create release
+        id: create_release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ env.GH_TOKEN }}
+          name: Release ${{ steps.current-time.outputs.formattedTime }}
+          body: |
+            Changes in this release:
+              - Vagrant version ${{ steps.vagrant.outputs.response }}
+          draft: false
+          prerelease: false
+          tag: ${{ steps.ghcli.outputs.response }}
+  notify_on_success:
+    name: Send notification on success
+    needs:
+      - create-release
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ env.DISCORD }}
+          description: "Release has been created!"
+  notify_on_failure:
+    name: Send notification on failure
+    needs:
+      - create-release
+    if: ${{ failure() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ env.DISCORD }}
+          status: failure
+          description: "Create release failed!"

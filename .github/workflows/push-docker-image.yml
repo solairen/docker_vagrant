@@ -1,0 +1,62 @@
+name: Docker registry
+on:
+  release:
+    types: 
+      - published
+
+env:
+  GH_TOKEN: ${{ secrets.token }}
+  DOCKER_USERNAME: ${{ secrets.docker_username }}
+  DOCKER_TOKEN: ${{ secrets.docker_token }}
+  DISCORD: ${{ secrets.discord_webhook }}
+
+jobs:
+  build:
+      runs-on: ubuntu-latest
+      container: docker:stable
+      steps:
+        - name: Check Vagrant version
+          id: vagrant
+          run: |
+            check=$(curl -s "https://api.github.com/repos/hashicorp/vagrant/tags" | grep '"name":' | sed "s/[^0-9.]//g" | head -n1)
+            echo ::set-output name=response::$check
+        - name: Login to Docker Hub
+          uses: docker/login-action@v1
+          with:
+            username: ${{ env.DOCKER_USERNAME }}
+            password: ${{ env.DOCKER_TOKEN }}
+        - name: Build and push with tag ${{ steps.vagrant.outputs.response }}
+          uses: docker/build-push-action@v2
+          with:
+            file: Dockerfile
+            push: true
+            tags: moleszek/vagrant:${{ steps.vagrant.outputs.response }}
+        - name: Build and push with tag latest
+          uses: docker/build-push-action@v2
+          with:
+            file: Dockerfile
+            push: true
+            tags: moleszek/vagrant:latest
+  notify_on_success:
+    name: Send notification on success
+    needs:
+      - build
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ env.DISCORD }}
+          description: "Successfully build and push docker image to DockerHub!"
+  notify_on_failure:
+    name: Send notification on failure
+    needs:
+      - build
+    if: ${{ failure() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ env.DISCORD }}
+          status: failure
+          description: "Failed to build and push docker image to DockerHub!"
