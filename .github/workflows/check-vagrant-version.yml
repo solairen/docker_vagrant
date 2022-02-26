@@ -6,7 +6,7 @@ on:
 env:
   GH_TOKEN: ${{ secrets.token }}
   REPO: ${{ secrets.repo }}
-  DISCORD: ${{ secret.discord_webhook }}
+  DISCORD: ${{ secrets.discord_webhook }}
 
 jobs:
   build:
