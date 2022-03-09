@@ -43,7 +43,7 @@ jobs:
         path: ./.github/actions/${{ github.repository }}/Dockerfile
   push:
     needs: build
-    if: ${{ contains(needs.build.outputs.version), 'Vagrant version changed to') }}
+    if: ${{ contains(needs.build.outputs.version, 'Vagrant version changed to') }}
     name: Push changes to repository
     runs-on: ubuntu-latest
     steps:
