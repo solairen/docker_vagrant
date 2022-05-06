@@ -21,7 +21,7 @@ jobs:
           ref: ${{ github.ref }}
           token: ${{ env.GH_TOKEN }}
       - name: Test docker image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           file: Dockerfile
           push: false
