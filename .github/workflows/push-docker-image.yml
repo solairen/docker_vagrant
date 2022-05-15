@@ -26,13 +26,13 @@ jobs:
             username: ${{ env.DOCKER_USERNAME }}
             password: ${{ env.DOCKER_TOKEN }}
         - name: Build and push with tag ${{ steps.vagrant.outputs.response }}
-          uses: docker/build-push-action@v2
+          uses: docker/build-push-action@v3
           with:
             file: Dockerfile
             push: true
             tags: moleszek/vagrant:${{ steps.vagrant.outputs.response }}
         - name: Build and push with tag latest
-          uses: docker/build-push-action@v2
+          uses: docker/build-push-action@v3
           with:
             file: Dockerfile
             push: true
