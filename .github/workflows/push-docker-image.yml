@@ -13,7 +13,6 @@ env:
 jobs:
   build:
       runs-on: ubuntu-latest
-      container: docker:stable
       steps:
         - name: Check Vagrant version
           id: vagrant
