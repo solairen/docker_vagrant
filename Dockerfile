@@ -1,8 +1,8 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 LABEL maintainer="mrsolairen@outlook.com"
 
-ARG version=2.2.19
+ARG version=2.3.0
 
 RUN mkdir /vagrant
 WORKDIR /vagrant
@@ -13,12 +13,12 @@ RUN apt -y update \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Vagrant
-RUN curl -O https://releases.hashicorp.com/vagrant/${version}/vagrant_${version}_x86_64.deb
-RUN apt -y install ./vagrant_${version}_x86_64.deb
+RUN curl -O https://releases.hashicorp.com/vagrant/${version}/vagrant_${version}-1_amd64.deb
+RUN apt -y install ./vagrant_${version}-1_amd64.deb
 RUN vagrant plugin install vagrant-vsphere
 RUN vagrant plugin install vagrant-linode
 
 # Remove unused files
-RUN rm -f vagrant_${version}_x86_64.deb
+RUN rm -f vagrant_${version}-1_amd64.deb
 
 ENTRYPOINT [ "vagrant" ]
