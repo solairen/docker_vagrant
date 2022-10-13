@@ -71,7 +71,7 @@ jobs:
         branch: vagrant-${{ steps.vagrant.outputs.response }}
         body: ${{ needs.build.outputs.version }}
     - name: Cleanup
-      uses: geekyeggo/delete-artifact@v1
+      uses: geekyeggo/delete-artifact@v2
       with:
         name: dockerfile
   notify_on_success:
