@@ -2,7 +2,7 @@ FROM ubuntu:22.04
 
 LABEL maintainer="mrsolairen@outlook.com"
 
-ARG version=2.3.3
+ARG version=2.3.4
 
 RUN mkdir /vagrant
 WORKDIR /vagrant
