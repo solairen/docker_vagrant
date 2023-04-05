@@ -63,7 +63,7 @@ jobs:
         check=$(curl -s "https://api.github.com/repos/hashicorp/vagrant/tags" | grep '"name":' | sed "s/[^0-9.]//g" | head -n1)
         echo ::set-output name=response::$check
     - name: Create Pull request
-      uses: peter-evans/create-pull-request@v4
+      uses: peter-evans/create-pull-request@v5
       with:
         token: ${{ env.GH_TOKEN }}
         title: ${{ needs.build.outputs.version }}
