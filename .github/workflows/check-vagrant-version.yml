@@ -37,7 +37,7 @@ jobs:
         token: ${{ env.GH_TOKEN }}
     - name: Upload dockerfile
       if: steps.dockerfile_update.outputs.response != ''
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: dockerfile
         path: ./.github/actions/${{ github.repository }}/Dockerfile
